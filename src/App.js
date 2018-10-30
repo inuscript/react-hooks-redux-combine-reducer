@@ -1,4 +1,4 @@
-import React, { Component, useReducer, useContext, createContext } from "react"
+import React, { useReducer, createContext, useMemo } from "react"
 import { rootReducer } from "./reducer"
 
 const ReducerContext = createContext(null)
@@ -6,51 +6,57 @@ const ReducerContext = createContext(null)
 const Counter = () => {
   return (
     <ReducerContext.Consumer>
-      {({ state, dispatch }) => {
-        return (
-          <div>
-            <h1>counter</h1>
-            <div>count: {state.counter}</div>
-            <button onClick={(e) => dispatch({ type: "INCREMENT" })}>+</button>
-            <button onClick={(e) => dispatch({ type: "DECREMENT" })}>-</button>
-          </div>
-        )
-      }}
+      {({ state, dispatch }) => (
+        <div>
+          <div>count: {state.counter}</div>
+          <button onClick={() => dispatch({ type: "INCREMENT" })}>+</button>
+          <button onClick={() => dispatch({ type: "DECREMENT" })}>-</button>
+        </div>
+      )}
     </ReducerContext.Consumer>
   )
 }
-const InputValue = () => {
+
+const InputValue = ({ state, dispatch }) => {
+  const inputValue = useMemo(() => state.someNested.inputValue, [
+    state.someNested.inputValue
+  ])
+  return (
+    <div>
+      <div>foo: {inputValue}</div>
+      <input
+        value={inputValue}
+        onChange={(e) =>
+          dispatch({
+            type: "UPDATE_VALUE",
+            value: e.target.value
+          })
+        }
+      />
+    </div>
+  )
+}
+const InputValueContainer = () => {
   return (
     <ReducerContext.Consumer>
-      {({ state, dispatch }) => {
-        return (
-          <div>
-            <h1>Input foo</h1>
-            <div>foo: {state.someNested.inputValue}</div>
-            <input
-              value={state.someNested.inputValue}
-              onChange={(e) =>
-                dispatch({
-                  type: "UPDATE_VALUE",
-                  value: e.target.value
-                })
-              }
-            />
-          </div>
-        )
-      }}
+      {({ state, dispatch }) => (
+        <InputValue state={state} dispatch={dispatch} />
+      )}
     </ReducerContext.Consumer>
   )
 }
 
 const App = () => {
-  const [state, dispatch] = useReducer(rootReducer, undefined, {})
+  const [state, dispatch] = useReducer(rootReducer, undefined, {
+    type: "DUMMY_INITIAL_ACTION"
+  })
+  console.log(state)
 
   return (
     <ReducerContext.Provider value={{ state, dispatch }}>
       <div className="App">
         <Counter />
-        <InputValue />
+        <InputValueContainer />
       </div>
     </ReducerContext.Provider>
   )
