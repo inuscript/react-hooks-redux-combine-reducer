@@ -1,14 +1,11 @@
-<<<<<<< HEAD
-import React, { useReducer, createContext, useMemo } from "react"
-=======
 import React, {
   Component,
   useReducer,
   useContext,
   createContext,
+  useMemo,
   useCallback
 } from "react"
->>>>>>> context-bind-action
 import { rootReducer } from "./reducer"
 
 const ReducerContext = createContext()
@@ -40,7 +37,8 @@ const useInputContainer = () => {
     state.someNested.inputValue
   ])
   return {
-    updateValue, inputValue
+    updateValue,
+    inputValue
   }
 }
 
