@@ -4,18 +4,33 @@ import React, {
   useContext,
   createContext,
   useMemo,
-  useCallback
+  useCallback,
+  Suspence
 } from "react"
 import { rootReducer } from "./reducer"
 
 const ReducerContext = createContext()
 
+const useCounterContext = () => {
+  const { state, dispatch } = useContext(ReducerContext)
+  const counter = useMemo(() => state.counter, [state.counter])
+  const increment = useCallback(
+    (e) => setTimeout(() => dispatch({ type: "INCREMENT" }), 500),
+    [dispatch]
+  )
+  const decrement = useCallback((e) => dispatch({ type: "DECREMENT" }), [
+    dispatch
+  ])
+
+  return { counter, increment, decrement }
+}
+
 const Counter = () => {
-  const { state, increment, decrement } = useContext(ReducerContext)
+  const { counter, increment, decrement } = useCounterContext()
   return (
     <div>
       <h1>counter</h1>
-      <div>count: {state.counter}</div>
+      <div>count: {counter}</div>
       <button onClick={increment}>+</button>
       <button onClick={decrement}>-</button>
     </div>
