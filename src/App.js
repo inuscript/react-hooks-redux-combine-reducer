@@ -48,9 +48,8 @@ const InputValueContainer = () => {
 
 const App = () => {
   const [state, dispatch] = useReducer(rootReducer, undefined, {
-    type: "DUMMY_INITIAL_ACTION"
+    type: "DUMMY_INIT"
   })
-  console.log(state)
 
   return (
     <ReducerContext.Provider value={{ state, dispatch }}>
