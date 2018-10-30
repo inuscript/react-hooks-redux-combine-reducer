@@ -1,28 +1,29 @@
 import React, { useReducer, createContext, useMemo } from "react"
 import { rootReducer } from "./reducer"
 
-const ReducerContext = createContext(null)
+const ReducerContext = createContext()
 
 const Counter = () => {
+  const { state, dispatch } = useContext(ReducerContext)
   return (
-    <ReducerContext.Consumer>
-      {({ state, dispatch }) => (
-        <div>
-          <div>count: {state.counter}</div>
-          <button onClick={() => dispatch({ type: "INCREMENT" })}>+</button>
-          <button onClick={() => dispatch({ type: "DECREMENT" })}>-</button>
-        </div>
-      )}
-    </ReducerContext.Consumer>
+    <div>
+      <h1>counter</h1>
+      <div>count: {state.counter}</div>
+      <button onClick={(e) => dispatch({ type: "INCREMENT" })}>+</button>
+      <button onClick={(e) => dispatch({ type: "DECREMENT" })}>-</button>
+    </div>
   )
 }
-
-const InputValue = ({ state, dispatch }) => {
+const InputValue = () => {
+  const { state, dispatch } = useContext(ReducerContext)
+  // state.someNested.inputValueが変更されるまでmemo化する
   const inputValue = useMemo(() => state.someNested.inputValue, [
     state.someNested.inputValue
   ])
+
   return (
     <div>
+      <h1>Input foo</h1>
       <div>foo: {inputValue}</div>
       <input
         value={inputValue}
@@ -36,28 +37,26 @@ const InputValue = ({ state, dispatch }) => {
     </div>
   )
 }
-const InputValueContainer = () => {
+
+const Provider = ({ children }) => {
+  const [state, dispatch] = useReducer(rootReducer, undefined, {
+    type: "DUMMY_INIT"
+  })
   return (
-    <ReducerContext.Consumer>
-      {({ state, dispatch }) => (
-        <InputValue state={state} dispatch={dispatch} />
-      )}
-    </ReducerContext.Consumer>
+    <ReducerContext.Provider value={{ state, dispatch }}>
+      {children}
+    </ReducerContext.Provider>
   )
 }
 
 const App = () => {
-  const [state, dispatch] = useReducer(rootReducer, undefined, {
-    type: "DUMMY_INIT"
-  })
-
   return (
-    <ReducerContext.Provider value={{ state, dispatch }}>
+    <Provider>
       <div className="App">
         <Counter />
-        <InputValueContainer />
+        <InputValue />
       </div>
-    </ReducerContext.Provider>
+    </Provider>
   )
 }
 
