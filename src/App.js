@@ -2,7 +2,9 @@ import React, { Component, useReducer } from "react"
 import { rootReducer } from "./reducer"
 
 const App = () => {
-  const [state, dispatch] = useReducer(rootReducer, undefined, {})
+  const [state, dispatch] = useReducer(rootReducer, undefined, {
+    type: "DUMMY_INIT"
+  })
   console.log(state)
 
   return (
