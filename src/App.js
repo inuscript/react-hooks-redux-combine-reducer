@@ -44,7 +44,9 @@ const InputValue = () => {
 }
 
 const App = () => {
-  const [state, dispatch] = useReducer(rootReducer, undefined, {})
+  const [state, dispatch] = useReducer(rootReducer, undefined, {
+    type: "DUMMY_INIT"
+  })
 
   return (
     <ReducerContext.Provider value={{ state, dispatch }}>
